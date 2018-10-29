@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
 {
 	private static float PlayerSpeed = 0.25f;
 	public GameObject tailPrefab;
-	public RoundOver other;
 	Vector2 dir = Vector2.up * PlayerSpeed;
 	List<Transform> tail = new List<Transform>();
 	private bool moved;
@@ -18,6 +17,14 @@ public class PlayerController : MonoBehaviour
 	{
 		moved = false;
 		InvokeRepeating("Move", 0.25f, 0.25f);
+	}
+	IEnumerator PauseTime()
+	{
+		while (true)
+		{
+			yield return new WaitForSeconds(2.0f);
+			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+		}
 	}
 	void Move()
 	{
@@ -35,6 +42,12 @@ public class PlayerController : MonoBehaviour
 			tail.Insert(0, g.transform);
 		}
 	}
+	public void StopInvoke()
+	{
+		CancelInvoke();
+		StartCoroutine("PauseTime");
+	}
+
 	// Update is called once per Frame
 	void Update()
 	{
@@ -51,11 +64,13 @@ public class PlayerController : MonoBehaviour
 	{
 		if (coll.tag.StartsWith("map"))
 		{
-			other.StopInvoke();
+			CancelInvoke();
+			StartCoroutine(PauseTime());
 		}
 		else if (coll.tag.StartsWith("Player"))
 		{
-			other.StopInvoke();
+			CancelInvoke();
+			StartCoroutine(PauseTime());
 		}
 	}
 }
