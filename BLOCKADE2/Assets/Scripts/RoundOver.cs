@@ -4,22 +4,19 @@ using UnityEngine.SceneManagement;
 
 public class RoundOver : MonoBehaviour
 {
-	public GameObject roundOver;
-	public int scoreValue;
-	public PlayerController AddScore;
-	private PlayerController playerScore;
-
-	void OnTriggerEnter2D(Collider2D coll) 
+	
+	IEnumerator PauseTime()
 	{
-		if (coll.tag.StartsWith("map"))
+		while (true)
 		{
-			Instantiate(roundOver, coll.transform.position, coll.transform.rotation);
+			yield return new WaitForSeconds(2.0f);
 			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}
-		if (coll.tag.StartsWith("player"))
-		{
-			Instantiate(roundOver, coll.transform.position, coll.transform.rotation);
-			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
-		}
+	}
+
+	public void StopInvoke()
+	{
+		CancelInvoke();
+		StartCoroutine("PauseTime");
 	}
 }
