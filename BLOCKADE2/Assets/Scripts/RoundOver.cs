@@ -2,10 +2,11 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class DestroyByContact : MonoBehaviour
+public class RoundOver : MonoBehaviour
 {
 	public GameObject roundOver;
 	public int scoreValue;
+	public PlayerController AddScore;
 	private PlayerController playerScore;
 
 	void OnTriggerEnter2D(Collider2D coll) 
@@ -13,13 +14,12 @@ public class DestroyByContact : MonoBehaviour
 		if (coll.tag.StartsWith("map"))
 		{
 			Instantiate(roundOver, coll.transform.position, coll.transform.rotation);
+			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}
-		Instantiate(roundOver, transform.position, transform.rotation);
 		if (coll.tag.StartsWith("player"))
 		{
 			Instantiate(roundOver, coll.transform.position, coll.transform.rotation);
+			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}
-		playerScore.AddScore (scoreValue);
-		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 	}
 }
