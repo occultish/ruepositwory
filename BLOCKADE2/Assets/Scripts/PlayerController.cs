@@ -6,13 +6,13 @@ public class PlayerController : MonoBehaviour {
 
 	// Current Movement Direction
 	// (by default it moves to the right)
-	public static float PlayerSpeed = 0.29f;
+	public static float PlayerSpeed = 0.2f;
 	Vector2 dir = Vector2.up*PlayerSpeed;
 	
 	// Use this for initialization
 	void Start () {
 		// Move the Snake every 300ms
-		InvokeRepeating("Move", 0.3f, 0.3f);    
+		InvokeRepeating("Move", 0.25f, 0.25f);    
 	}
     
 	void Move() {
