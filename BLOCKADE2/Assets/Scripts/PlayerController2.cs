@@ -4,14 +4,14 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController2 : MonoBehaviour
 {
 
 	// Current Movement Direction
 	// (by default it moves to the right)
 	public static float PlayerSpeed = 0.25f;
 	public GameObject tailPrefab;
-	Vector2 dir = Vector2.up * PlayerSpeed;
+	Vector2 dir = Vector2.down * PlayerSpeed;
 	List<Transform> tail = new List<Transform>();
 	private bool moved;
 	public Text scoreText;
@@ -32,10 +32,12 @@ public class PlayerController : MonoBehaviour
 		// Move head into new direction
 		Vector2 v = transform.position;
 		transform.Translate(dir);
-		if (transform.hasChanged) {
+		if (transform.hasChanged)
+		{
 			// Get longer in next Move call
 			moved = true;
 		}
+
 		if (moved)
 		{
 			// Load Prefab into the world
@@ -48,19 +50,19 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-		// Update is called once per Frame
-		void Update()
-		{
-			// Move in a new Direction?
-			if (Input.GetKey(KeyCode.RightArrow))
-				dir = Vector2.right * PlayerSpeed;
-			else if (Input.GetKey(KeyCode.DownArrow))
-				dir = -Vector2.up * PlayerSpeed;
-			else if (Input.GetKey(KeyCode.LeftArrow))
-				dir = -Vector2.right * PlayerSpeed;
-			else if (Input.GetKey(KeyCode.UpArrow))
-				dir = Vector2.up * PlayerSpeed;
-		}
+	// Update is called once per Frame
+	void Update()
+	{
+		// Move in a new Direction?
+		if (Input.GetKey(KeyCode.A))
+			dir = Vector2.right * PlayerSpeed;
+		else if (Input.GetKey(KeyCode.S))
+			dir = -Vector2.up * PlayerSpeed;
+		else if (Input.GetKey(KeyCode.D))
+			dir = -Vector2.right * PlayerSpeed;
+		else if (Input.GetKey(KeyCode.W))
+			dir = Vector2.up * PlayerSpeed;
+	}
 	public void AddScore (int newScoreValue)
 	{
 		score += newScoreValue;
@@ -71,4 +73,4 @@ public class PlayerController : MonoBehaviour
 	{
 		scoreText.text = "Score: " + score;
 	}
-	}
+}
