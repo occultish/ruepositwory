@@ -15,10 +15,10 @@ public class PlayerController : MonoBehaviour
 	private Vector3 prevPosition;
 	//List<Transform> tail = new List<Transform>();
 	//private bool moved;
-	private bool stopped;
+	private bool paused;
 	private float playerMoveTimer;
 	private Quaternion rotation;
-	private AudioSource squidtunes;
+	public AudioSource squidtunes;
 	private SpriteRenderer mySpriteRenderer;
 	
 	// Use this for initialization
@@ -30,13 +30,14 @@ public class PlayerController : MonoBehaviour
 		playerRotation = transform.rotation;
 	}
 	
-	IEnumerator PauseTime()
+	IEnumerator PauseTime(float pauseTime)
 	{
-		while (true)
-		{
-			yield return new WaitForSeconds(2.0f);
-			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
-		}
+		paused = true;
+		float originalSpeed = PlayerSpeed;
+		
+		yield return new WaitForSeconds(pauseTime);
+		paused = false;
+		PlayerSpeed = originalSpeed;
 	}
 	
 	private void PressStart()

@@ -18,7 +18,7 @@ public class PlayerController2 : MonoBehaviour
 	private bool stopped;
 	private float playerMoveTimer;
 	private Quaternion rotation;
-	private AudioSource squidtunes;
+	public AudioSource squidtunes;
 	private SpriteRenderer mySpriteRenderer;
 	
 	// Use this for initialization

@@ -4,19 +4,16 @@ using UnityEngine.SceneManagement;
 
 public class RoundOver : MonoBehaviour
 {
-	
-	IEnumerator PauseTime()
+	// Update is called once per frame
+	void Update()
 	{
-		while (true)
+		if (Input.GetKeyDown(KeyCode.R))
 		{
-			yield return new WaitForSeconds(2.0f);
-			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+			ResetGame();
 		}
 	}
-
-	public void StopInvoke()
+	void ResetGame()
 	{
-		CancelInvoke();
-		StartCoroutine("PauseTime");
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 }
