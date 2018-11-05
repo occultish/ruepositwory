@@ -12,12 +12,15 @@ public class PlayerController2 : MonoBehaviour
 	Vector2 dir = Vector2.down * PlayerSpeed;
 	List<Transform> tail = new List<Transform>();
 	private bool moved;
-
+	public float turnspeed;
+	private SpriteRenderer mySpriteRenderer;
+	
 	// Use this for initialization
 	void Start()
 	{
 		moved = false;
 		InvokeRepeating("Move", 0.25f, 0.25f);
+		mySpriteRenderer = GetComponent<SpriteRenderer>();
 	}
 
 	IEnumerator PauseTime()
@@ -55,13 +58,27 @@ public class PlayerController2 : MonoBehaviour
 	void Update()
 	{
 		if (Input.GetKey(KeyCode.D))
+		{
 			dir = Vector2.right * PlayerSpeed;
+			transform.Rotate(Vector3.right, turnspeed * Time.deltaTime);
+		}
 		else if (Input.GetKey(KeyCode.S))
+		{
 			dir = -Vector2.up * PlayerSpeed;
+			transform.Rotate(Vector3.down, turnspeed * Time.deltaTime);
+
+		}
 		else if (Input.GetKey(KeyCode.A))
+		{
 			dir = -Vector2.right * PlayerSpeed;
+			transform.Rotate(Vector3.left, turnspeed * Time.deltaTime);
+			
+		}
 		else if (Input.GetKey(KeyCode.W))
+		{
 			dir = Vector2.up * PlayerSpeed;
+			transform.Rotate(Vector3.up, turnspeed * Time.deltaTime);
+		}
 	}
 	void OnTriggerEnter2D(Collider2D coll) 
 	{

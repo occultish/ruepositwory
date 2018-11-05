@@ -51,13 +51,13 @@ public class PlayerController : MonoBehaviour
 	// Update is called once per Frame
 	void Update()
 	{
-		if (Input.GetKey(KeyCode.RightArrow))
+		if (Input.GetKeyDown(KeyCode.RightArrow))
 			dir = Vector2.right * PlayerSpeed;
-		else if (Input.GetKey(KeyCode.DownArrow))
+		else if (Input.GetKeyDown(KeyCode.DownArrow))
 			dir = -Vector2.up * PlayerSpeed;
-		else if (Input.GetKey(KeyCode.LeftArrow))
+		else if (Input.GetKeyDown(KeyCode.LeftArrow))
 			dir = -Vector2.right * PlayerSpeed;
-		else if (Input.GetKey(KeyCode.UpArrow))
+		else if (Input.GetKeyDown(KeyCode.UpArrow))
 			dir = Vector2.up * PlayerSpeed;
 	}
 	void OnTriggerEnter2D(Collider2D coll) 
