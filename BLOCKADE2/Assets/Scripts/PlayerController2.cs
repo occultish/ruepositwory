@@ -7,90 +7,96 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController2 : MonoBehaviour
 {
-	private static float PlayerSpeed = 0.25f;
+	public bool objCollision;
+	public Quaternion playerRotation;
+	public static float PlayerSpeed = 0.25f;
 	public GameObject tailPrefab;
-	Vector2 dir = Vector2.down * PlayerSpeed;
-	List<Transform> tail = new List<Transform>();
-	private bool moved;
-	public float turnspeed;
+	private Vector3 dir;
+	private Vector3 prevPosition;
+	//List<Transform> tail = new List<Transform>();
+	//private bool moved;
+	private bool stopped;
+	private float playerMoveTimer;
+	private Quaternion rotation;
+	private AudioSource squidtunes;
 	private SpriteRenderer mySpriteRenderer;
 	
 	// Use this for initialization
 	void Start()
 	{
-		moved = false;
-		InvokeRepeating("Move", 0.25f, 0.25f);
-		mySpriteRenderer = GetComponent<SpriteRenderer>();
+		squidtunes = GetComponent<AudioSource>();
+		//moved = false;
+		//InvokeRepeating("Move", 0.25f, 0.25f);
+		playerRotation = transform.rotation;
 	}
-
+	
 	IEnumerator PauseTime()
 	{
 		while (true)
 		{
-			yield return new WaitForSeconds(3.0f);
+			yield return new WaitForSeconds(2.0f);
 			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}
 	}
-
-	void Move()
+	
+	private void PressStart()
 	{
-		Vector2 v = transform.position;
-		transform.Translate(dir);
-		if (transform.hasChanged)
-		{
-			moved = true;
-		}
-
-		if (moved)
-		{
-			GameObject g = Instantiate(tailPrefab, v, Quaternion.identity);
-			tail.Add(tailPrefab.transform);
-			tail.Insert(0, g.transform);
-		}
+		dir = Vector2.up * PlayerSpeed;
+		rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 0);
+		playerMoveTimer = 0;
 	}
-	public void StopInvoke()
-	{
-		CancelInvoke();
-		StartCoroutine("PauseTime");
-	}
-
+	// GOT RID OF THE INVOKE FINALLY
+	//public void StopInvoke()
+	//{
+	//	CancelInvoke();
+	//	StartCoroutine("PauseTime");
+	//}
+    // Admittedly got help from Carsen's script on this next part. I really, really could not figure it out.
 	// Update is called once per Frame
 	void Update()
 	{
-		if (Input.GetKey(KeyCode.D))
-		{
-			dir = Vector2.right * PlayerSpeed;
-			transform.Rotate(Vector3.right, turnspeed * Time.deltaTime);
-		}
-		else if (Input.GetKey(KeyCode.S))
-		{
-			dir = -Vector2.up * PlayerSpeed;
-			transform.Rotate(Vector3.down, turnspeed * Time.deltaTime);
-
-		}
-		else if (Input.GetKey(KeyCode.A))
-		{
-			dir = -Vector2.right * PlayerSpeed;
-			transform.Rotate(Vector3.left, turnspeed * Time.deltaTime);
-			
-		}
-		else if (Input.GetKey(KeyCode.W))
+		playerMoveTimer += Time.deltaTime;
+		
+		if (Input.GetKeyDown(KeyCode.W) && dir != Vector3.down)
 		{
 			dir = Vector2.up * PlayerSpeed;
-			transform.Rotate(Vector3.up, turnspeed * Time.deltaTime);
+			rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 0);
+		}
+		else if (Input.GetKeyDown(KeyCode.A) && dir != Vector3.right)
+		{
+			dir = Vector2.left * PlayerSpeed;
+			rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 90);
+		}
+		else if (Input.GetKeyDown(KeyCode.S) && dir != Vector3.up)
+		{
+			dir = Vector2.down * PlayerSpeed;
+			rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 180);
+		}
+		else if (Input.GetKeyDown(KeyCode.D) && dir != Vector3.left)
+		{
+			dir = Vector2.right * PlayerSpeed;
+			rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, -90);		
+		}
+
+		if (playerMoveTimer >= PlayerSpeed)
+		{
+			prevPosition = transform.position;
+			transform.rotation = rotation;
+			transform.position += dir;
+			GameObject Ink = Instantiate(tailPrefab, prevPosition, transform.rotation);
+			Ink.GetComponent<SpriteRenderer>();
+			playerMoveTimer = 0;
 		}
 	}
 	void OnTriggerEnter2D(Collider2D coll) 
 	{
 		if (coll.tag.StartsWith("map"))
 		{
-			CancelInvoke();
-			StartCoroutine(PauseTime());
+			objCollision = true;
 		}
 		else if (coll.tag.StartsWith("Player"))
 		{
-			CancelInvoke();
-			StartCoroutine(PauseTime());
+			objCollision = true;
 		}
 	}
 }

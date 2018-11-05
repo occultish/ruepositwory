@@ -7,17 +7,29 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-	private static float PlayerSpeed = 0.25f;
+	public bool objCollision;
+	public Quaternion playerRotation;
+	public static float PlayerSpeed = 0.25f;
 	public GameObject tailPrefab;
-	Vector2 dir = Vector2.up * PlayerSpeed;
-	List<Transform> tail = new List<Transform>();
-	private bool moved;
+	private Vector3 dir;
+	private Vector3 prevPosition;
+	//List<Transform> tail = new List<Transform>();
+	//private bool moved;
+	private bool stopped;
+	private float playerMoveTimer;
+	private Quaternion rotation;
+	private AudioSource squidtunes;
+	private SpriteRenderer mySpriteRenderer;
+	
 	// Use this for initialization
 	void Start()
 	{
-		moved = false;
-		InvokeRepeating("Move", 0.25f, 0.25f);
+		squidtunes = GetComponent<AudioSource>();
+		//moved = false;
+		//InvokeRepeating("Move", 0.25f, 0.25f);
+		playerRotation = transform.rotation;
 	}
+	
 	IEnumerator PauseTime()
 	{
 		while (true)
@@ -26,51 +38,65 @@ public class PlayerController : MonoBehaviour
 			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}
 	}
-	void Move()
+	
+	private void PressStart()
 	{
-		Vector2 v = transform.position;
-		transform.Translate(dir);
-		if (transform.hasChanged)
-		{
-			moved = true;
-		}
-
-		if (moved)
-		{
-			GameObject g = Instantiate(tailPrefab, v, Quaternion.identity);
-			tail.Add(tailPrefab.transform);
-			tail.Insert(0, g.transform);
-		}
+		dir = Vector2.up;
+		rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 0);
+		playerMoveTimer = 0;
 	}
-	public void StopInvoke()
-	{
-		CancelInvoke();
-		StartCoroutine("PauseTime");
-	}
-
+	// GOT RID OF THE INVOKE FINALLY
+	//public void StopInvoke()
+	//{
+	//	CancelInvoke();
+	//	StartCoroutine("PauseTime");
+	//}
+    // Admittedly got help from Carsen's script on this next part. I really, really could not figure it out.
 	// Update is called once per Frame
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.RightArrow))
-			dir = Vector2.right * PlayerSpeed;
-		else if (Input.GetKeyDown(KeyCode.DownArrow))
-			dir = -Vector2.up * PlayerSpeed;
-		else if (Input.GetKeyDown(KeyCode.LeftArrow))
-			dir = -Vector2.right * PlayerSpeed;
-		else if (Input.GetKeyDown(KeyCode.UpArrow))
+		playerMoveTimer += Time.deltaTime;
+		
+		if (Input.GetKeyDown(KeyCode.UpArrow) && dir != Vector3.down)
+		{
 			dir = Vector2.up * PlayerSpeed;
+			rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 0);
+		}
+		else if (Input.GetKeyDown(KeyCode.LeftArrow) && dir != Vector3.right)
+		{
+			dir = Vector2.left * PlayerSpeed;
+			rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 90);
+		}
+		else if (Input.GetKeyDown(KeyCode.DownArrow) && dir != Vector3.up)
+		{
+			dir = Vector2.down * PlayerSpeed;
+			rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 180);
+		}
+		else if (Input.GetKeyDown(KeyCode.RightArrow) && dir != Vector3.left)
+		{
+			dir = Vector2.right * PlayerSpeed;
+			rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, -90);		
+		}
+
+		if (playerMoveTimer >= PlayerSpeed)
+		{
+			prevPosition = transform.position;
+			transform.rotation = rotation;
+			transform.position += dir;
+			GameObject Ink = Instantiate(tailPrefab, prevPosition, transform.rotation);
+			Ink.GetComponent<SpriteRenderer>();
+			playerMoveTimer = 0;
+		}
 	}
 	void OnTriggerEnter2D(Collider2D coll) 
 	{
 		if (coll.tag.StartsWith("map"))
 		{
-			CancelInvoke();
-			StartCoroutine(PauseTime());
+			objCollision = true;
 		}
 		else if (coll.tag.StartsWith("Player"))
 		{
-			CancelInvoke();
-			StartCoroutine(PauseTime());
+			objCollision = true;
 		}
 	}
 }
